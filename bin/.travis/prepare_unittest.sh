@@ -2,6 +2,9 @@
 
 # File for setting up system for unit/integration testing
 
+# import travis_retry function
+source travis_retry.sh
+
 # Disable xdebug to speed things up as we don't currently generate coverge on travis
 # And make sure we use UTF-8 encoding
 if [ "$TRAVIS_PHP_VERSION" != "hhvm" ] ; then
@@ -60,10 +63,10 @@ fi
 # Install packages with composer update if asked for to make sure not use composer.lock if present
 if [ "$COMPOSER_UPDATE" = "true" ] ; then
     echo "> Install dependencies through Composer (using update as other packages was requested)"
-    composer update --no-progress --no-interaction --prefer-dist
+    travis_retry composer update --no-progress --no-interaction --prefer-dist
 else
     echo "> Install dependencies through Composer"
-    composer install --no-progress --no-interaction --prefer-dist
+    travis_retry composer install --no-progress --no-interaction --prefer-dist
 fi
 
 # Setup Solr / Elastic search if asked for
